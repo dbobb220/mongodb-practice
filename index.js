@@ -1,8 +1,10 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const dotenv = require('dotenv').config();
+const products = require('./products');
 
 // change this to your mongodb atlas uri
-const url = '';
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@aca-practice-bx4sb.mongodb.net/test?retryWrites=true&w=majority`;
 
 // Create a new MongoClient
 const client = new MongoClient(url);
@@ -16,7 +18,7 @@ function doStuffAfterConnected(err){
       return;
     }
     console.log("Connected successfully to server");
-    const db = client.db("???");
+    const db = client.db("aca-store");
     insertSomething(db,()=>{
       findSomething(db,()=>{
         client.close();
@@ -27,7 +29,7 @@ function doStuffAfterConnected(err){
 
 const findSomething = function(db,callback) {
     // Get the documents collection
-    const collection = db.collection('???');
+    const collection = db.collection('products');
     // Find some documents
     let found = collection.find({});
     found.toArray(function(err, docs) {
@@ -39,11 +41,9 @@ const findSomething = function(db,callback) {
   }
 const insertSomething = function(db,callback) {
     // Get the documents collection
-    const collection = db.collection('???');
+    const collection = db.collection('products');
     // Insert some documents
-    collection.insertMany([
-      {a : 1}, {a : 2}, {a : 3}
-    ], function(err, result) {
+    collection.insertMany(products, function(err, result) {
       console.log("Inserted documents into the collection");
       callback();
     });
